@@ -5,6 +5,7 @@
 
   $recaptcha_site_key = "Recaptcha public site key";
   $recaptcha_secret = "Recaptcha private secret key";
+  $url_rewrite = false;
  // End Settings 
   
   $UserSubmission = _INPUT("s", false);
@@ -44,8 +45,12 @@
   }
 
   function create_reply_links($text) {
-    $text = preg_replace("/(?:@)([0-9]*)(?:\s|\n)/", '<a href="' . $mainURL . 'index.php?g=\1">\0</a>', $text);
-
+    global $url_rewrite;
+    if($url_rewrite) {
+      $text = preg_replace("/(?:@)([0-9]*)(?:\s|\n)/", '<a href="' . $mainURL . '\1">\0</a>', $text);
+    } else {
+      $text = preg_replace("/(?:@)([0-9]*)(?:\s|\n)/", '<a href="' . $mainURL . 'index.php?g=\1">\0</a>', $text);
+    }
     return $text;
   }
 
@@ -53,6 +58,7 @@
   	global $post_summary;
   	global $thisURL;
   	global $mainURL;
+    global $url_rewrite;
 
 		$file_contents = file_get_contents($directory . $post_number . ".txt");
 
@@ -61,7 +67,13 @@
 		$post_summary = substr($file_contents, 0, 90) . '...';
 		$post_summary = trim(preg_replace('/\s\s+/', ' ', $post_summary));
 		$post_summary = urlencode($post_summary);
-		$thisURL = $mainURL . "index.php?g=" . $post_number;
+    
+    if ($url_rewrite) {
+		  $thisURL = $mainURL . $post_number;
+    else {
+      $thisURL = $mainURL . "index.php?g=" . $post_number;
+    }
+
     echo '<h2><a href="' . $thisURL . '">#' . $post_number . '</a></h2>';
 		echo nl2p($file_contents);
 	}
