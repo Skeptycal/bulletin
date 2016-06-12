@@ -1,9 +1,9 @@
 <?php
 // Settings
   $mainURL = "https://website.com/";
-	$PostsDirectory = getcwd() . '/posts/';
+  $PostsDirectory = getcwd() . '/posts/';
 
-	$recaptcha_site_key = "Recaptcha public site key";
+  $recaptcha_site_key = "Recaptcha public site key";
   $recaptcha_secret = "Recaptcha private secret key";
  // End Settings 
   
