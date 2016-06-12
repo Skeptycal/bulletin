@@ -6,8 +6,8 @@
   $recaptcha_site_key = "Recaptcha public site key";
   $recaptcha_secret = "Recaptcha private secret key";
   $url_rewrite = false;
- // End Settings 
-  
+ // End Settings
+
   $UserSubmission = _INPUT("s", false);
   $GoTo = _INPUT("g", "0");
   $GoTo = intval($GoTo);
@@ -30,8 +30,8 @@
   else
   {
     if ($UserSubmission) {
-		  user_posts($PostsDirectory, $UserSubmission);
-	  }
+      user_posts($PostsDirectory, $UserSubmission);
+    }
   }
 
   function get_post($directory) {
@@ -54,83 +54,88 @@
     return $text;
   }
 
-	function print_post($directory , $post_number) {
-  	global $post_summary;
-  	global $thisURL;
-  	global $mainURL;
+  function print_post($directory , $post_number) {
+    global $post_summary;
+    global $thisURL;
+    global $mainURL;
     global $url_rewrite;
 
-		$file_contents = file_get_contents($directory . $post_number . ".txt");
-
-		$file_contents = create_reply_links($file_contents);
-
-		$post_summary = substr($file_contents, 0, 90) . '...';
-		$post_summary = trim(preg_replace('/\s\s+/', ' ', $post_summary));
-		$post_summary = urlencode($post_summary);
-    
     if ($url_rewrite) {
-		  $thisURL = $mainURL . $post_number;
+      $thisURL = $mainURL . $post_number;
+    }
     else {
       $thisURL = $mainURL . "index.php?g=" . $post_number;
     }
 
     echo '<h2><a href="' . $thisURL . '">#' . $post_number . '</a></h2>';
-		echo nl2p($file_contents);
-	}
 
-	function permalink() {
-  	global $thisURL;
-  	echo $thisURL;
-	}
+    if (file_exists($directory . $post_number . ".txt")) {
+      $file_contents = file_get_contents($directory . $post_number . ".txt");
+      $file_contents = create_reply_links($file_contents);
 
-	function post_summary() {
-  	global $post_summary;
-  	echo $post_summary;
-	}
+      $post_summary = substr($file_contents, 0, 90) . '...';
+      $post_summary = trim(preg_replace('/\s\s+/', ' ', $post_summary));
+      $post_summary = urlencode($post_summary);
 
-	function print_alert($text) {
+      echo nl2p($file_contents);
+    } else {
+      echo '<p>:-( This post has been deleted.</p>';
+    }
+  }
+
+  function permalink() {
+    global $thisURL;
+    echo $thisURL;
+  }
+
+  function post_summary() {
+    global $post_summary;
+    echo $post_summary;
+  }
+
+  function print_alert($text) {
     echo '<div id="alert">';
     echo $text;
     echo '</div>';
-	}
+  }
 
-	function rand_post($directory) {
-		$rand_post = -1;
+  function rand_post($directory) {
+    $rand_post = -1;
 
-		$post_number = get_post_count($directory);
+    $post_number = get_post_count($directory);
 
-		if ($post_number >= 1) {
-			$rand_post = rand(1, $post_number);
-		} else {
-			$rand_post = -2;
-		}
+    if ($post_number >= 1) {
+      $rand_post = rand(1, $post_number);
+    } else {
+      $rand_post = -2;
+    }
 
-		return $rand_post;
-	}
+    return $rand_post;
+  }
 
-	function get_post_count($directory){
-		$post_number = 0;
+  function get_post_count($directory){
+    $post_number = 0;
 
-		if (file_exists($directory)){
-			$post_list = glob($directory . "*.txt");
-			if ($post_list){
-				$post_number = count($post_list);
-			}
-		}
-		return $post_number;
-	}
+    if (file_exists($directory)){
+      $post_list = glob($directory . "*.txt");
+      if ($post_list){
+        $post_number = count($post_list);
+      }
+    }
+    return $post_number;
+  }
 
-	function user_posts($directory, $user_text) {
-  	$user_text = strip_tags($user_text);
-		$new_post_number = get_post_count($directory) + 1;
-		$file_name = $directory . $new_post_number . ".txt";
-		if (!(file_exists($file_name))) {
-			file_put_contents($file_name, $user_text);
-		}
-	}
+  function user_posts($directory, $user_text) {
+    $user_text = strip_tags($user_text);
+    $new_post_number = get_post_count($directory) + 1;
+    $file_name = $directory . $new_post_number . ".txt";
+    if (!(file_exists($file_name))) {
+      file_put_contents($file_name, $user_text);
+    }
+  }
 
 // grabbed from http://stackoverflow.com/questions/7409512/new-line-to-paragraph-function
-	function nl2p($string, $line_breaks = true, $xml = true) {
+  function nl2p($string, $line_breaks = true, $xml = true) {
 
   $string = str_replace(array('<p>', '</p>', '<br>', '<br />'), '', $string);
 
@@ -153,12 +158,12 @@
     echo $recaptcha_site_key;
   }
 
-	function _INPUT($name, $default)
-	{
-		if (isset($_REQUEST[$name])) {
-			return strip_tags($_REQUEST[$name]);
-		}else{
-			return $default;
-		}
-	}
+  function _INPUT($name, $default)
+  {
+    if (isset($_REQUEST[$name])) {
+      return strip_tags($_REQUEST[$name]);
+    }else{
+      return $default;
+    }
+  }
 ?>
