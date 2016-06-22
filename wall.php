@@ -135,6 +135,12 @@
     return $post_number;
   }
 
+  function get_title() {
+    global $title;
+
+    echo $title;
+  }
+
   function user_posts($directory, $user_text) {
     $user_text = strip_tags($user_text);
     $new_post_number = get_post_count($directory) + 1;

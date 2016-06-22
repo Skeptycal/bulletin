@@ -1,5 +1,6 @@
 <?php
   $mainURL = "https://website.com/";
+  $title = "my website";
   $PostsDirectory = getcwd() . '/posts/';
   $url_rewrite = false;
 
