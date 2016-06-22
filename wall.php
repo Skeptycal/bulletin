@@ -1,12 +1,5 @@
 <?php
-// Settings
-  $mainURL = "https://website.com/";
-  $PostsDirectory = getcwd() . '/posts/';
-
-  $recaptcha_site_key = "Recaptcha public site key";
-  $recaptcha_secret = "Recaptcha private secret key";
-  $url_rewrite = false;
- // End Settings
+  require 'config.php';
 
   $UserSubmission = _INPUT("s", false);
   $GoTo = _INPUT("g", "0");
@@ -54,6 +47,21 @@
     return $text;
   }
 
+  function create_url_links($text) {
+    $url_search = '~(?:\s|\n)(?:(https?)://([^\s<]+)|(www\.[^\s<]+?\.[^\s<]+))(?<![\.,:])~i';
+    $processed = preg_replace($url_search, '<a href="$0" target="_blank" title="$0">$0</a>', $text);
+
+    return $processed;
+  }
+
+  function create_imgur_embed($text) {
+    $imgur_search = '~(?:\s|\n)(?:(http|https):\/\/|www.)(?:\bimgur.com\/\b)(\w*)\s~i';
+    $imgur_embed = '</p><p class=imgur_embed><a href="https://imgur.com/$2"><img class=imgur src="https://imgur.com/$2l.jpg"></a></p>';
+    $processed = preg_replace($imgur_search, $imgur_embed, $text);
+
+    return $processed;
+  }
+
   function print_post($directory , $post_number) {
     global $post_summary;
     global $thisURL;
@@ -72,6 +80,8 @@
     if (file_exists($directory . $post_number . ".txt")) {
       $file_contents = file_get_contents($directory . $post_number . ".txt");
       $file_contents = create_reply_links($file_contents);
+      $file_contents = create_imgur_embed($file_contents);
+      $file_contents = create_url_links($file_contents);
 
       $post_summary = substr($file_contents, 0, 90) . '...';
       $post_summary = trim(preg_replace('/\s\s+/', ' ', $post_summary));
@@ -79,7 +89,7 @@
 
       echo nl2p($file_contents);
     } else {
-      echo '<p>:-( This post has been deleted.</p>';
+      echo '<p>404 This post not found.</p>';
     }
   }
 
